@@ -582,10 +582,10 @@ a name, and any arbitrary data is sent in on the info keyword argument
 
 >>> from bx.intervals.intersection import Interval
 
->>> f1 = Interval(23, 36)
->>> f2 = Interval(34, 48, value={'chr':12, 'anno':'transposon'})
+>>> f1 = Interval->new(23, 36);
+>>> f2 = Interval->new(34, 48, {'chr':12, 'anno':'transposon'});
 >>> f2
-Interval(34, 48, value={'anno': 'transposon', 'chr': 12})
+Interval(34, 48, {'anno': 'transposon', 'chr': 12})
 
 =cut
 
