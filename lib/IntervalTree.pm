@@ -452,7 +452,7 @@ sub _intersect {
   }
   # This interval
   if (( $self->{end} > $start ) && ( $self->{start} < $end )) {
-    $results->append( $self->{interval} );
+    push @$results, $self->{interval};
   }
   # Right subtree
   if ($self->{cright} != $EmptyNode && $self->{start} < $end) {
@@ -478,7 +478,7 @@ sub _seek_left {
   }
 
   if (-1 < $position - $self->{end} && $position - $self->{end} < $max_dist) {
-    $results->append($self->{interval});
+    push @$results, $self->{interval};
   }
 
   # TODO: can these conditionals be more stringent?
@@ -504,7 +504,7 @@ sub _seek_right {
   }
 
   if (-1 < $self->{start} - $position && $self->{start} - $position < $max_dist) {
-    $results->append($self->{interval});
+    push @$results, $self->{interval};
   }
 
   if ($self->{cright} != $EmptyNode) {
@@ -529,7 +529,7 @@ sub left {
   my $results = [];
   # use start - 1 becuase .left() assumes strictly left-of
   $self->_seek_left( $position - 1, $results, $n, $max_dist );
-  return $results if length($results) == $n;
+  return $results if length(@$results) == $n;
 
   my $r = $results;
   @$r = sort {$b->{end} <=> $a->{end}} @$r;
@@ -553,7 +553,7 @@ sub right {
   my $results = [];
   # use end + 1 because .right() assumes strictly right-of
   $self->_seek_right($position + 1, $results, $n, $max_dist);
-  return $results if length($results) == $n;
+  return $results if length(@$results) == $n;
 
   my $r = $results;
   @$r = sort {$a->{start} <=> $b->{start}} @$r;
