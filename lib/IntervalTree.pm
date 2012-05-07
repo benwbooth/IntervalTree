@@ -45,48 +45,48 @@ Usage
 
 Create an empty IntervalTree
 
->>> use IntervalTree;
->>> my $intersecter = IntervalTree->new();
+    >>> use IntervalTree;
+    >>> my $intersecter = IntervalTree->new();
 
 An interval is a start and end position and a value (possibly None).
 You can add any object as an interval:
 
->>> $intersecter->insert( 0, 10, "food" );
->>> $intersecter->insert( 3, 7, {foo=>'bar'} );
+    >>> $intersecter->insert( 0, 10, "food" );
+    >>> $intersecter->insert( 3, 7, {foo=>'bar'} );
 
->>> $intersecter->find( 2, 5 );
-['food', {'foo'=>'bar'}]
+    >>> $intersecter->find( 2, 5 );
+    ['food', {'foo'=>'bar'}]
 
 If the object has start and end attributes (like the IntervalTree::Interval class) there
 is are some shortcuts:
 
->>> my $intersecter = IntervalTree->new();
->>> $intersecter->insert_interval( IntervalTree::Interval->new( 0, 10 ) );
->>> $intersecter->insert_interval( IntervalTree::Interval->new( 3, 7 ) );
->>> $intersecter->insert_interval( IntervalTree::Interval->new( 3, 40 ) );
->>> $intersecter->insert_interval( IntervalTree::Interval->new( 13, 50 ) );
+    >>> my $intersecter = IntervalTree->new();
+    >>> $intersecter->insert_interval( IntervalTree::Interval->new( 0, 10 ) );
+    >>> $intersecter->insert_interval( IntervalTree::Interval->new( 3, 7 ) );
+    >>> $intersecter->insert_interval( IntervalTree::Interval->new( 3, 40 ) );
+    >>> $intersecter->insert_interval( IntervalTree::Interval->new( 13, 50 ) );
 
->>> $intersecter->find( 30, 50 );
-[IntervalTree::Interval(3, 40), IntervalTree::Interval(13, 50)]
->>> $intersecter->find( 100, 200 );
-[]
+    >>> $intersecter->find( 30, 50 );
+    [IntervalTree::Interval(3, 40), IntervalTree::Interval(13, 50)]
+    >>> $intersecter->find( 100, 200 );
+    []
 
 Before/after for intervals
 
->>> $intersecter->before_interval( IntervalTree::Interval->new( 10, 20 ) );
-[IntervalTree::Interval(3, 7)]
->>> $intersecter->before_interval( IntervalTree::Interval->new( 5, 20 ) );
-[]
+    >>> $intersecter->before_interval( IntervalTree::Interval->new( 10, 20 ) );
+    [IntervalTree::Interval(3, 7)]
+    >>> $intersecter->before_interval( IntervalTree::Interval->new( 5, 20 ) );
+    []
 
 Upstream/downstream
 
->>> $intersecter->upstream_of_interval(IntervalTree::Interval->new(11, 12));
-[IntervalTree::Interval(0, 10)]
->>> $intersecter->upstream_of_interval(IntervalTree::Interval->new(11, 12, undef, undef, "-"));
-[IntervalTree::Interval(13, 50)]
+    >>> $intersecter->upstream_of_interval(IntervalTree::Interval->new(11, 12));
+    [IntervalTree::Interval(0, 10)]
+    >>> $intersecter->upstream_of_interval(IntervalTree::Interval->new(11, 12, undef, undef, "-"));
+    [IntervalTree::Interval(13, 50)]
 
->>> intersecter.upstream_of_interval(IntervalTree::Interval(1, 2, undef, undef, "-"), 3);
-[IntervalTree::Interval(3, 7), IntervalTree::Interval(3, 40), IntervalTree::Interval(13, 50)]
+    >>> intersecter.upstream_of_interval(IntervalTree::Interval(1, 2, undef, undef, "-"), 3);
+    [IntervalTree::Interval(3, 7), IntervalTree::Interval(3, 40), IntervalTree::Interval(13, 50)]
 
 =cut
   
@@ -515,9 +515,9 @@ sub _seek_right {
 =head2 left
 
 find n features with a start > than `position`
-f: a IntervalTree::Interval object (or anything with an `end` attribute)
-n: the number of features to return
-max_dist: the maximum distance to look before giving up.
+    f: a IntervalTree::Interval object (or anything with an `end` attribute)
+    n: the number of features to return
+    max_dist: the maximum distance to look before giving up.
 
 =cut
     
@@ -539,9 +539,9 @@ sub left {
 =head2 right
 
 find n features with a end < than position
-f: a IntervalTree::Interval object (or anything with a `start` attribute)
-n: the number of features to return
-max_dist: the maximum distance to look before giving up.
+    f: a IntervalTree::Interval object (or anything with a `start` attribute)
+    n: the number of features to return
+    max_dist: the maximum distance to look before giving up.
 
 =cut
 
@@ -580,12 +580,12 @@ Basic feature, with required integer start and end properties.
 Also accepts optional strand as +1 or -1 (used for up/downstream queries),
 a name, and any arbitrary data is sent in on the info keyword argument
 
->>> from bx.intervals.intersection import IntervalTree::Interval
+    >>> from bx.intervals.intersection import IntervalTree::Interval
 
->>> f1 = IntervalTree::Interval->new(23, 36);
->>> f2 = IntervalTree::Interval->new(34, 48, {'chr':12, 'anno':'transposon'});
->>> f2
-Interval(34, 48, {'anno': 'transposon', 'chr': 12})
+    >>> f1 = IntervalTree::Interval->new(23, 36);
+    >>> f2 = IntervalTree::Interval->new(34, 48, {'chr':12, 'anno':'transposon'});
+    >>> f2
+    Interval(34, 48, {'anno': 'transposon', 'chr': 12})
 
 =cut
 
@@ -617,9 +617,11 @@ sub str {
 
 Ben Booth, C<< <benwbooth at gmail.com> >>
 
-Original Authors: James Taylor (james@jamestaylor.org),
-          Ian Schenk (ian.schenck@gmail.com),
-          Brent Pedersen (bpederse@gmail.com)
+Original Authors: 
+
+    James Taylor (james@jamestaylor.org),
+    Ian Schenk (ian.schenck@gmail.com),
+    Brent Pedersen (bpederse@gmail.com)
 
 =head2 BUGS
 
@@ -662,9 +664,11 @@ This code was directly ported from the bx-python project:
 
 https://bitbucket.org/james_taylor/bx-python/src/tip/lib/bx/intervals/intersection.pyx
 
-Original Authors: James Taylor (james@jamestaylor.org),
-          Ian Schenk (ian.schenck@gmail.com),
-          Brent Pedersen (bpederse@gmail.com)
+Original Authors: 
+
+    James Taylor (james@jamestaylor.org),
+    Ian Schenk (ian.schenck@gmail.com),
+    Brent Pedersen (bpederse@gmail.com)
 
 =head2 LICENSE AND COPYRIGHT
 
