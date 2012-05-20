@@ -412,7 +412,7 @@ sub set_ends {
   if ($self->{cright} != $EmptyNode && $self->{cleft} != $EmptyNode) {
     $self->{maxend} = max($self->{end}, $self->{cright}{maxend}, $self->{cleft}{maxend});
     $self->{minend} = min($self->{end}, $self->{cright}{minend}, $self->{cleft}{minend});
-    $self->{minstart} = min($self->{start}, $self->{cright}{minstartz}, $self->{cleft}{minstart});
+    $self->{minstart} = min($self->{start}, $self->{cright}{minstart}, $self->{cleft}{minstart});
   }
   elsif ( $self->{cright} != $EmptyNode) {
     $self->{maxend} = max($self->{end}, $self->{cright}{maxend});
