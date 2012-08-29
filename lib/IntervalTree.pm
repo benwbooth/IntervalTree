@@ -7,7 +7,7 @@ use strict;
 use warnings;
 no warnings 'once';
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 NAME
 
@@ -45,48 +45,50 @@ Usage
 
 Create an empty IntervalTree
 
-    >>> use IntervalTree;
-    >>> my $intersecter = IntervalTree->new();
+    use IntervalTree;
+    my $intersecter = IntervalTree->new();
 
 An interval is a start and end position and a value (possibly None).
 You can add any object as an interval:
 
-    >>> $intersecter->insert( 0, 10, "food" );
-    >>> $intersecter->insert( 3, 7, {foo=>'bar'} );
+    $intersecter->insert( 0, 10, "food" );
+    $intersecter->insert( 3, 7, {foo=>'bar'} );
 
-    >>> $intersecter->find( 2, 5 );
-    ['food', {'foo'=>'bar'}]
+    $intersecter->find( 2, 5 );
+    # output: ['food', {'foo'=>'bar'}]
 
 If the object has start and end attributes (like the IntervalTree::Interval class) there
 is are some shortcuts:
 
-    >>> my $intersecter = IntervalTree->new();
-    >>> $intersecter->insert_interval( IntervalTree::Interval->new( 0, 10 ) );
-    >>> $intersecter->insert_interval( IntervalTree::Interval->new( 3, 7 ) );
-    >>> $intersecter->insert_interval( IntervalTree::Interval->new( 3, 40 ) );
-    >>> $intersecter->insert_interval( IntervalTree::Interval->new( 13, 50 ) );
+    my $intersecter = IntervalTree->new();
+    $intersecter->insert_interval( IntervalTree::Interval->new( 0, 10 ) );
+    $intersecter->insert_interval( IntervalTree::Interval->new( 3, 7 ) );
+    $intersecter->insert_interval( IntervalTree::Interval->new( 3, 40 ) );
+    $intersecter->insert_interval( IntervalTree::Interval->new( 13, 50 ) );
 
-    >>> $intersecter->find( 30, 50 );
-    [IntervalTree::Interval(3, 40), IntervalTree::Interval(13, 50)]
-    >>> $intersecter->find( 100, 200 );
-    []
+    $intersecter->find( 30, 50 );
+    # output: [IntervalTree::Interval(3, 40), IntervalTree::Interval(13, 50)]
+
+    $intersecter->find( 100, 200 );
+    # output: []
 
 Before/after for intervals
 
-    >>> $intersecter->before_interval( IntervalTree::Interval->new( 10, 20 ) );
-    [IntervalTree::Interval(3, 7)]
-    >>> $intersecter->before_interval( IntervalTree::Interval->new( 5, 20 ) );
-    []
+    $intersecter->before_interval( IntervalTree::Interval->new( 10, 20 ) );
+    # output: [IntervalTree::Interval(3, 7)]
+
+    $intersecter->before_interval( IntervalTree::Interval->new( 5, 20 ) );
+    # output: []
 
 Upstream/downstream
 
-    >>> $intersecter->upstream_of_interval(IntervalTree::Interval->new(11, 12));
-    [IntervalTree::Interval(0, 10)]
-    >>> $intersecter->upstream_of_interval(IntervalTree::Interval->new(11, 12, undef, undef, "-"));
-    [IntervalTree::Interval(13, 50)]
+    $intersecter->upstream_of_interval(IntervalTree::Interval->new(11, 12));
+    # output: [IntervalTree::Interval(0, 10)]
+    $intersecter->upstream_of_interval(IntervalTree::Interval->new(11, 12, undef, undef, "-"));
+    # output: [IntervalTree::Interval(13, 50)]
 
-    >>> intersecter.upstream_of_interval(IntervalTree::Interval(1, 2, undef, undef, "-"), 3);
-    [IntervalTree::Interval(3, 7), IntervalTree::Interval(3, 40), IntervalTree::Interval(13, 50)]
+    $intersecter.upstream_of_interval(IntervalTree::Interval->new(1, 2, undef, undef, "-"), 3);
+    # output: [IntervalTree::Interval(3, 7), IntervalTree::Interval(3, 40), IntervalTree::Interval(13, 50)]
 
 =cut
   
@@ -234,7 +236,7 @@ sub upstream_of_interval {
   if (!defined $self->{root}) {
     return [];
   }
-  if ($interval->{strand} == -1 || $interval->{strand} eq "-") {
+  if ($interval->{strand} && ($interval->{strand} eq "-" || $interval->{strand} eq "-1")) {
     return $self->{root}->right( $interval->{end}, $num_intervals, $max_dist );
   }
   else {
@@ -258,7 +260,7 @@ sub downstream_of_interval {
   if (!defined $self->{root}) {
     return [];
   }
-  if ($interval->{strand} == -1 || $interval->{strand} eq "-") {
+  if ($interval->{strand} && ($interval->{strand} eq "-" || $interval->{strand} eq "-1")) {
     return $self->{root}->left( $interval->{start}, $num_intervals, $max_dist );
   }
   else {
@@ -529,7 +531,7 @@ sub left {
   my $results = [];
   # use start - 1 becuase .left() assumes strictly left-of
   $self->_seek_left( $position - 1, $results, $n, $max_dist );
-  return $results if length(@$results) == $n;
+  return $results if scalar(@$results) == $n;
 
   my $r = $results;
   @$r = sort {$b->{end} <=> $a->{end}} @$r;
@@ -553,7 +555,7 @@ sub right {
   my $results = [];
   # use end + 1 because .right() assumes strictly right-of
   $self->_seek_right($position + 1, $results, $n, $max_dist);
-  return $results if length(@$results) == $n;
+  return $results if scalar(@$results) == $n;
 
   my $r = $results;
   @$r = sort {$a->{start} <=> $b->{start}} @$r;
@@ -580,12 +582,10 @@ Basic feature, with required integer start and end properties.
 Also accepts optional strand as +1 or -1 (used for up/downstream queries),
 a name, and any arbitrary data is sent in on the info keyword argument
 
-    >>> from bx.intervals.intersection import IntervalTree::Interval
-
-    >>> f1 = IntervalTree::Interval->new(23, 36);
-    >>> f2 = IntervalTree::Interval->new(34, 48, {'chr':12, 'anno':'transposon'});
-    >>> f2
-    Interval(34, 48, {'anno': 'transposon', 'chr': 12})
+    $f1 = IntervalTree::Interval->new(23, 36);
+    $f2 = IntervalTree::Interval->new(34, 48, {'chr':12, 'anno':'transposon'});
+    $f2
+    # output: Interval(34, 48, {'anno': 'transposon', 'chr': 12})
 
 =cut
 
